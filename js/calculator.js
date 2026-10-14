@@ -1,3 +1,8 @@
+//Variables
+let firstNumber;
+let operator;
+let secondNumber;
+
 // Add function
 function add(a, b) {
   return a + b;
