@@ -1,37 +1,35 @@
-//Variables
-let firstNumber;
-let operator;
-let secondNumber;
+// Calculator state
+let firstNumber = "";
+let operator = "";
+let secondNumber = "";
 
-// Add function
+// DOM elements
+const display = document.querySelector(".calculator-display");
+const equalsButton = document.querySelector(".btn-equals");
+const clearButton = document.querySelector(".btn-clear");
+const backButton = document.querySelector(".btn-back");
+
+// --------------------------------------------------
+// Arithmetic functions
+// --------------------------------------------------
+
 function add(a, b) {
   return a + b;
 }
 
-console.log(add(7, 8));
-
-// Subtract function
 function subtract(a, b) {
   return a - b;
 }
 
-console.log(subtract(7, 8));
-
-// Multiply function
 function multiply(a, b) {
   return a * b;
 }
 
-console.log(multiply(7, 8));
-
-// Divide function
 function divide(a, b) {
   return a / b;
 }
 
-console.log(divide(7, 8));
-
-// Operator function
+// Perform calculation
 function operate(operator, firstNumber, secondNumber) {
   if (operator === "+") {
     return add(firstNumber, secondNumber);
@@ -46,7 +44,169 @@ function operate(operator, firstNumber, secondNumber) {
   }
 }
 
-console.log(operate("+", 7, 8));
-console.log(operate("-", 7, 8));
-console.log(operate("*", 7, 8));
-console.log(operate("/", 7, 8));
+// --------------------------------------------------
+// Input handlers
+// --------------------------------------------------
+
+// Handle number input
+function handleNumber(number) {
+  if (operator) {
+    secondNumber += number;
+  } else {
+    firstNumber += number;
+  }
+
+  display.textContent = firstNumber + operator + secondNumber;
+}
+
+// Handle operator input
+function handleOperator(selectedOperator) {
+  if (firstNumber !== "") {
+    operator = selectedOperator;
+    display.textContent = firstNumber + operator + secondNumber;
+  }
+}
+
+// Handle equals
+function handleEquals() {
+  const result = operate(operator, Number(firstNumber), Number(secondNumber));
+
+  display.textContent = result;
+}
+
+// Handle clear
+function handleClear() {
+  firstNumber = "";
+  operator = "";
+  secondNumber = "";
+
+  display.textContent = 0;
+}
+
+// Handle backspace
+function handleBackspace() {
+  if (secondNumber) {
+    secondNumber = secondNumber.slice(0, -1);
+  } else if (operator) {
+    operator = operator.slice(0, -1);
+  } else if (firstNumber) {
+    firstNumber = firstNumber.slice(0, -1);
+  }
+
+  if (firstNumber === "" && operator === "" && secondNumber === "") {
+    display.textContent = 0;
+  } else {
+    display.textContent = firstNumber + operator + secondNumber;
+  }
+}
+
+// --------------------------------------------------
+// Button event listeners
+// --------------------------------------------------
+
+// Number buttons
+function handleNumberButtons() {
+  document.querySelectorAll(".nmbr-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      handleNumber(button.textContent);
+    });
+  });
+}
+
+// Operator buttons
+function handleOperatorButtons() {
+  document.querySelectorAll(".operator-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      handleOperator(button.textContent);
+    });
+  });
+}
+
+// Clear button
+function handleClearButton() {
+  clearButton.addEventListener("click", () => {
+    handleClear();
+  });
+}
+
+// Backspace button
+function handleBackButton() {
+  backButton.addEventListener("click", () => {
+    handleBackspace();
+  });
+}
+
+// --------------------------------------------------
+// Keyboard event listeners
+// --------------------------------------------------
+
+// Number keys
+function handleKeyboardNumbers() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key >= "0" && event.key <= "9") {
+      handleNumber(event.key);
+    }
+  });
+}
+
+// Operator keys
+function handleKeyboardOperators() {
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "+" ||
+      event.key === "-" ||
+      event.key === "*" ||
+      event.key === "/"
+    ) {
+      handleOperator(event.key);
+    }
+  });
+}
+
+// Enter and equals keys
+function handleKeyboardEquals() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === "=") {
+      handleEquals();
+    }
+  });
+}
+
+// Escape key
+function handleKeyboardClear() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      handleClear();
+    }
+  });
+}
+
+// Backspace key
+function handleKeyboardBack() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Backspace") {
+      handleBackspace();
+    }
+  });
+}
+
+// --------------------------------------------------
+// Initialize event listeners
+// --------------------------------------------------
+
+// Button events
+handleNumberButtons();
+handleOperatorButtons();
+handleClearButton();
+handleBackButton();
+
+equalsButton.addEventListener("click", () => {
+  handleEquals();
+});
+
+// Keyboard events
+handleKeyboardNumbers();
+handleKeyboardOperators();
+handleKeyboardEquals();
+handleKeyboardClear();
+handleKeyboardBack();
