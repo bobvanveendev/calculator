@@ -85,7 +85,7 @@ body {
 
 /* Zero button */
 .btn-zero {
-  flex: 0 0 100%;
+  flex: 1 0 calc((100% - 20px) / 3);
 }
 
 /* Operator buttons */
@@ -196,7 +196,6 @@ body {
     flex-basis: calc((100% - 8px) / 2);
   }
 
-  .btn-zero,
   .btn-equals {
     flex-basis: 100%;
   }

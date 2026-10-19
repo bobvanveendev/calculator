@@ -2,6 +2,7 @@
 let firstNumber = "";
 let operator = "";
 let secondNumber = "";
+let hasResult = false;
 
 // DOM elements
 const display = document.querySelector(".calculator-display");
@@ -31,6 +32,9 @@ function divide(a, b) {
 
 // Perform calculation
 function operate(operator, firstNumber, secondNumber) {
+  if (operator === "/" && Number(secondNumber) === 0) {
+    return "Nice try!";
+  }
   if (operator === "+") {
     return add(firstNumber, secondNumber);
   } else if (operator === "-") {
@@ -50,9 +54,24 @@ function operate(operator, firstNumber, secondNumber) {
 
 // Handle number input
 function handleNumber(number) {
+  if (display.textContent === "Nice try!" || hasResult) {
+    handleClear();
+  }
   if (operator) {
+    if (secondNumber.includes(".") && number === ".") {
+      return;
+    }
+    if (number === "." && secondNumber === "") {
+      secondNumber += "0";
+    }
     secondNumber += number;
   } else {
+    if (firstNumber.includes(".") && number === ".") {
+      return;
+    }
+    if (number === "." && firstNumber === "") {
+      firstNumber += "0";
+    }
     firstNumber += number;
   }
 
@@ -61,7 +80,19 @@ function handleNumber(number) {
 
 // Handle operator input
 function handleOperator(selectedOperator) {
+  if (secondNumber !== "") {
+    let result = operate(operator, Number(firstNumber), Number(secondNumber));
+    if (result === "Nice try!") {
+      display.textContent = "Nice try!";
+      return;
+    }
+    const roundedResult = Number(result.toFixed(6));
+
+    firstNumber = String(roundedResult);
+    secondNumber = "";
+  }
   if (firstNumber !== "") {
+    hasResult = false;
     operator = selectedOperator;
     display.textContent = firstNumber + operator + secondNumber;
   }
@@ -69,9 +100,20 @@ function handleOperator(selectedOperator) {
 
 // Handle equals
 function handleEquals() {
-  const result = operate(operator, Number(firstNumber), Number(secondNumber));
+  if (firstNumber !== "" && operator !== "" && secondNumber !== "") {
+    let result = operate(operator, Number(firstNumber), Number(secondNumber));
+    if (typeof result === "string") {
+      display.textContent = result;
+    } else {
+      const roundedResult = Number(result.toFixed(6));
 
-  display.textContent = result;
+      display.textContent = roundedResult;
+      hasResult = true;
+      firstNumber = String(roundedResult);
+      operator = "";
+      secondNumber = "";
+    }
+  }
 }
 
 // Handle clear
@@ -79,12 +121,15 @@ function handleClear() {
   firstNumber = "";
   operator = "";
   secondNumber = "";
+  hasResult = false;
 
   display.textContent = 0;
 }
 
 // Handle backspace
 function handleBackspace() {
+  hasResult = false;
+
   if (secondNumber) {
     secondNumber = secondNumber.slice(0, -1);
   } else if (operator) {
@@ -143,7 +188,7 @@ function handleBackButton() {
 // Number keys
 function handleKeyboardNumbers() {
   document.addEventListener("keydown", (event) => {
-    if (event.key >= "0" && event.key <= "9") {
+    if ((event.key >= "0" && event.key <= "9") || event.key === ".") {
       handleNumber(event.key);
     }
   });
