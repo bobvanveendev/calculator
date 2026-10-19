@@ -107,6 +107,11 @@ body {
   background-color: #94a3b8;
 }
 
+.btn-clear,
+.btn-back {
+  flex: 0 0 calc((100% - 10px) / 2);
+}
+
 /* Clear button */
 .btn-clear {
   background-color: #fecaca;
